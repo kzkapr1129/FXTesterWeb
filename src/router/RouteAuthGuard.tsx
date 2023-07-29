@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import React, { ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 
 type Props = {
   element: ReactNode;
@@ -7,18 +7,17 @@ type Props = {
 
 export const RouteAuthGuard: React.FC<Props> = (props) => {
   const { element } = props;
+  const location = useLocation();
 
-  let granted = true;
+  const granted = true;
 
   // TODO: ローカルストレージからログイン済みか判定する
 
   if (!granted) {
-    return <Navigate to={'/login'} state={{from:useLocation()}} replace={false} />
+    return (
+      <Navigate to={'/login'} state={{ from: location }} replace={false} />
+    );
   }
 
-  return (
-    <>
-        {element}
-    </>
-  );
-}
+  return <>{element}</>;
+};
