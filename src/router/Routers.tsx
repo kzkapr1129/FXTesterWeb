@@ -15,8 +15,8 @@ export const Routers: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<DashboardLayout />}>
           <Route index element={<RouteAuthGuard element={<HomePage />} />} />
-          <Route path="upload" element={<RouteAuthGuard element={<UploadPage />} />} />
-          <Route path="/verification" element={<RouteAuthGuard element={<UploadPage />} />} />
+          <Route path="/upload" element={<RouteAuthGuard element={<UploadPage />} />} />
+          <Route path="/verification" element={<RouteAuthGuard element={<VerificationPage />} />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
