@@ -1,7 +1,13 @@
-import { Button, Drawer, DrawerBody, DrawerContent, DrawerOverlay } from "@chakra-ui/react";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Path } from "../../common/defines";
+import React from 'react';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerOverlay
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Path } from '../../common/defines';
 
 type Props = {
   onClose: () => void;
@@ -38,5 +44,5 @@ export const DashboardDrawer: React.FC<Props> = (props) => {
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>
-  )
-}
+  );
+};

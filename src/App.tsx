@@ -1,6 +1,6 @@
 import React from 'react';
-import { Routers } from './router/Routers';
 import { ChakraProvider } from '@chakra-ui/react';
+import { Routers } from './router/Routers';
 import theme from './theme/theme';
 
 export const App: React.FC = () => {

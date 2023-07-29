@@ -1,13 +1,13 @@
-import { Box, Flex, Heading, Link } from "@chakra-ui/react";
-import React from "react";
-import { MenuIconButton } from "../atoms/MenuIconButton";
-import { useNavigate } from "react-router-dom";
-import { Path } from "../../common/defines";
+import React from 'react';
+import { Box, Flex, Heading, Link } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { MenuIconButton } from '../atoms/MenuIconButton';
+import { Path } from '../../common/defines';
 
 type Props = {
   onOpen: () => void;
   onClose: () => void;
-}
+};
 
 export const DashboardHeader: React.FC<Props> = (props) => {
   const { onOpen, onClose } = props;
@@ -52,5 +52,5 @@ export const DashboardHeader: React.FC<Props> = (props) => {
       </Flex>
       <MenuIconButton onOpen={onOpen} />
     </Flex>
-  )
-}
+  );
+};

@@ -1,4 +1,3 @@
-
 import React, { memo } from 'react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
