@@ -26,7 +26,7 @@ const initialState = {
   errorMessage: '',
   isUploading: false,
   isFileOpened: false,
-  candles: []
+  data: []
 };
 
 export const UploadPage: React.FC = () => {
@@ -42,15 +42,24 @@ export const UploadPage: React.FC = () => {
     // ファイル読み込み完了時に発火するリスナー
     reader.addEventListener('load', () => {
       if (typeof reader.result === 'string') {
-        const lines = loadCsv(reader.result);
+        const filename = e.target.files[0].name;
+        const matcher = filename.match(/^([a-zA-Z]{6})(M1|M5|M15|M30|H1|H4|Daily|Weekly)\.csv$/);
+        const pairName = (matcher && 1 <= matcher.length && matcher[1]) || '不明';
+        const timeType = (matcher && 2 <= matcher.length && matcher[2]) || '不明';
+
+        const data = loadCsv(reader.result);
+        const startTime = data[0].time;
+        const endTime = data.slice(-1)[0].time;
+
         const payload = {
-          filename: 'hoge',
-          startTime: '2020',
-          endTime: '2021',
-          pairName: 'EURUSD',
-          timeType: 'Daily',
-          data: []
+          filename,
+          startTime,
+          endTime,
+          pairName,
+          timeType,
+          data
         };
+
         dispatch({ type: 'FILE_OPENED', payload });
       }
     });
@@ -149,7 +158,7 @@ export const UploadPage: React.FC = () => {
             <Box>
               <Heading size="xs">データ件数</Heading>
               <Text pt={2} fontSize="sm">
-                {state.candles.length}
+                {state.data.length}
               </Text>
             </Box>
           </Stack>
@@ -159,7 +168,7 @@ export const UploadPage: React.FC = () => {
             <PrimaryButton
               onClick={() => console.error('未実装')}
               isDisabled={
-                !state.isFileOpened || state.errorMessage.length !== 0
+                !state.isFileOpened || state.errorMessage.length !== 0 || state.data.length <= 0
               }
             >
               アップロード

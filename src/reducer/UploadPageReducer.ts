@@ -35,7 +35,7 @@ type State = {
   errorMessage: string;
   isUploading: boolean;
   isFileOpened: boolean;
-  candles: Array<Candle>;
+  data: Array<Candle>;
 };
 
 export const UploadPageReducer = (state: State, action: Action) => {
