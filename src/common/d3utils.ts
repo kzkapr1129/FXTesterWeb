@@ -1,5 +1,64 @@
 import * as d3 from 'd3';
-import { Data, getPriceMinMax, getUtcTimeFrom } from './Common';
+
+/**
+ * Description placeholder
+ * @date 2023/7/18 - 22:05:56
+ *
+ * @typedef {Data}
+ */
+export type Data = {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
+
+/**
+ * Description placeholder
+ * @date 2023/7/22 - 16:31:27
+ *
+ * @param {Array<Data>} data
+ * @returns {{ min: any; max: any; }}
+ */
+export const getPriceMinMax = (data: Array<Data>) => {
+  // dataの最高値を取得
+  const max = data.reduce(
+    (acc, cur) => Math.max(acc, cur.high),
+    data[0]?.high ?? 0
+  );
+  // dataの最安値を取得
+  const min = data.reduce(
+    (acc, cur) => Math.min(acc, cur.low),
+    data[0]?.low ?? 0
+  );
+  return { min, max };
+};
+
+/**
+ * Description placeholder
+ * @date 2023/7/22 - 16:33:54
+ *
+ * @param {string} dateTime
+ * @returns {number}
+ */
+export const getUtcTimeFrom = (dateTime: string): number => {
+  const reg_yyyyMMddHHmm = /^(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})$/;
+  const match1 = dateTime.match(reg_yyyyMMddHHmm);
+  if (match1 && 6 <= match1.length) {
+    return Date.parse(
+      `${match1[1]}-${match1[2]}-${match1[3]}T${match1[4]}:${match1[5]}:00`
+    );
+  }
+
+  const reg_yyyyMMdd = /^(\d{4})\.(\d{2})\.(\d{2})$/;
+  const match2 = dateTime.match(reg_yyyyMMdd);
+  if (match2 && 4 <= match2.length) {
+    return Date.parse(`${match2[1]}-${match2[2]}-${match2[3]}T00:00:00`);
+  }
+
+  return 0;
+};
 
 /**
  * Description placeholder
@@ -28,7 +87,7 @@ export type SMAConfig = {
   color: string;
   width: number;
   isFront: boolean;
-}
+};
 
 /**
  * Description placeholder
@@ -67,9 +126,9 @@ export const makeScales = (
  * @param {string} tagId
  */
 export const renderCandles = (
-  ref: React.MutableRefObject<any>,
-  xScale: any,
-  yScale: any,
+  ref: React.MutableRefObject<SVGSVGElement>,
+  xScale: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+  yScale: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
   colorStyle: CandleColorStyle,
   tagId: string,
   data: Array<Data>
@@ -149,9 +208,9 @@ export const renderCandles = (
  * @param {Array<Data>} data
  */
 export const renderSMAs = (
-  ref: React.MutableRefObject<any>,
-  xScale: any,
-  yScale: any,
+  ref: React.MutableRefObject<SVGElement>,
+  xScale: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+  yScale: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
   tagId: string,
   smaConfigs: Array<SMAConfig>,
   data: Array<Data>
@@ -182,7 +241,9 @@ export const renderSMAs = (
   const gData = svg.select(tagId).selectAll('g').data(smaConfigs);
   gData.exit().remove();
   gData.enter().append('g');
-  svg.select(tagId).selectAll('g')
+  svg
+    .select(tagId)
+    .selectAll('g')
     .attr('id', (v) => `sma-${v.average}`);
 
   smaValues.forEach((smaValue, i) => {

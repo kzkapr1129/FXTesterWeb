@@ -1,6 +1,4 @@
-import { Candle } from "../../types/Candle";
-
-export const loadCsv: (string) => Array<Candle> = (csvString: string) => {
+export const loadCsv = (csvString: string) => {
   const lines = csvString
     .trim()
     .split('\n')
@@ -11,14 +9,14 @@ export const loadCsv: (string) => Array<Candle> = (csvString: string) => {
       (line) => !(1 == line.length && line[0] === '') && !(line.length <= 0)
     ); // 空行を除外
 
-  return lines.map(line => ({
-    time: line[0],
-    open: Number(line[1]),
-    high: Number(line[2]),
-    low: Number(line[3]),
-    close: Number(line[4]),
-    tickVolume: Number(line[5]),
-  })).sort((a, b) => a.time < b.time ? -1 : 1);
+  return lines
+    .map((line) => ({
+      time: line[0],
+      open: Number(line[1]),
+      high: Number(line[2]),
+      low: Number(line[3]),
+      close: Number(line[4]),
+      tickVolume: Number(line[5])
+    }))
+    .sort((a, b) => (a.time < b.time ? -1 : 1));
 };
-
-

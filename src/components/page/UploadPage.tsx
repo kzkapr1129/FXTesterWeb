@@ -30,7 +30,7 @@ const initialState = {
 };
 
 export const UploadPage: React.FC = () => {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const onClickButton = () => {
     inputRef.current?.click();
   };
@@ -39,13 +39,17 @@ export const UploadPage: React.FC = () => {
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    // ファイル読み込み完了時に発火するリスナー
+
     reader.addEventListener('load', () => {
       if (typeof reader.result === 'string') {
-        const filename = e.target.files[0].name;
-        const matcher = filename.match(/^([a-zA-Z]{6})(M1|M5|M15|M30|H1|H4|Daily|Weekly)\.csv$/);
-        const pairName = (matcher && 1 <= matcher.length && matcher[1]) || '不明';
-        const timeType = (matcher && 2 <= matcher.length && matcher[2]) || '不明';
+        const filename = e.target.files?.[0]?.name ?? '';
+        const matcher = filename.match(
+          /^([a-zA-Z]{6})(M1|M5|M15|M30|H1|H4|Daily|Weekly)\.csv$/
+        );
+        const pairName =
+          (matcher && 1 <= matcher.length && matcher[1]) || '不明';
+        const timeType =
+          (matcher && 2 <= matcher.length && matcher[2]) || '不明';
 
         const data = loadCsv(reader.result);
         const startTime = data[0].time;
@@ -168,7 +172,9 @@ export const UploadPage: React.FC = () => {
             <PrimaryButton
               onClick={() => console.error('未実装')}
               isDisabled={
-                !state.isFileOpened || state.errorMessage.length !== 0 || state.data.length <= 0
+                !state.isFileOpened ||
+                state.errorMessage.length !== 0 ||
+                state.data.length <= 0
               }
             >
               アップロード

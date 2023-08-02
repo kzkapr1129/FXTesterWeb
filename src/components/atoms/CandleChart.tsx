@@ -1,10 +1,14 @@
-import { Box } from "@chakra-ui/react";
-import React, { useLayoutEffect, useRef } from "react";
-import { CandleColorStyle, SMAConfig, makeScales, renderCandles, renderSMAs } from "./D3jsUtil";
+import { Box } from '@chakra-ui/react';
+import React, { useLayoutEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { Candle } from "../../types/Candle";
-
-const paddingBottom = 40;
+import { Candle } from '../../types/Candle';
+import {
+  CandleColorStyle,
+  SMAConfig,
+  makeScales,
+  renderCandles,
+  renderSMAs
+} from '../../common/d3utils';
 
 /**
  * Description placeholder
@@ -17,7 +21,7 @@ type Props = {
   h?: string;
   data: Array<Candle>;
   colorStyle?: CandleColorStyle;
-  smaConfigs?: Array<SMAConfig>
+  smaConfigs?: Array<SMAConfig>;
 };
 
 /**
@@ -28,17 +32,23 @@ type Props = {
  * @returns {*}
  */
 export const CandleChart: React.FC<Props> = (props) => {
-  const {w = '100%', h = '100%', data, colorStyle = {}, smaConfigs = []} = props;
-  const d3ContainerRef = useRef(null);
-  const svgRef = useRef(null);
+  const {
+    w = '100%',
+    h = '100%',
+    data,
+    colorStyle = {},
+    smaConfigs = []
+  } = props;
+  const d3ContainerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   // チャートコンポーネントのサイズ変更を検知するEffect
   useLayoutEffect(() => {
     // サイズ変更時に呼び出されるオブザーバ
     const resizeObserver = new ResizeObserver(() => {
       // コンテナのサイズを取得
-      const viewWidth = d3ContainerRef.current.offsetWidth;
-      const viewHeight = d3ContainerRef.current.offsetHeight;
+      const viewWidth = d3ContainerRef.current?.offsetWidth ?? 0;
+      const viewHeight = d3ContainerRef.current?.offsetHeight ?? 0;
 
       // X軸、Y軸のスケールを作成
       const { xScale, yScale } = makeScales(data, viewWidth, viewHeight);
@@ -46,8 +56,8 @@ export const CandleChart: React.FC<Props> = (props) => {
       // ローソク足チャートの描画
       renderCandles(svgRef, xScale, yScale, colorStyle, '#candles', data);
 
-      const frontSmaConfigs = smaConfigs.filter(config => config.isFront);
-      const backSmaConfigs = smaConfigs.filter(config => !config.isFront);
+      const frontSmaConfigs = smaConfigs.filter((config) => config.isFront);
+      const backSmaConfigs = smaConfigs.filter((config) => !config.isFront);
 
       // SMAの描画
       renderSMAs(
@@ -69,27 +79,27 @@ export const CandleChart: React.FC<Props> = (props) => {
         data
       );
 
-      const xAxis = d3.axisBottom()
+      const xAxis = d3
+        .axisBottom()
         .scale(xScale)
         .tickValues(xScale.domain().filter((_, i) => !(i % 50)))
-        .tickFormat(d => `2023/01/01 00:00`);
+        .tickFormat((d) => `2023/01/01 00:00 ${d}`); // TODO
 
-      d3.selectAll("path").attr('hoge', 'red');
+      d3.selectAll('path').attr('hoge', 'red');
 
-      d3.select("#axis_bottom")
-        .attr("transform", `translate(0, ${viewHeight - 40})`)
-        .call(xAxis)
-
+      d3.select('#axis_bottom')
+        .attr('transform', `translate(0, ${viewHeight - 40})`)
+        .call(xAxis);
     });
 
     const refCurrent = d3ContainerRef.current;
-    resizeObserver.observe(refCurrent);
+    resizeObserver.observe(refCurrent as Element);
 
     return () => {
       // その後で、監視を停止することができる
-      resizeObserver.unobserve(refCurrent);
+      resizeObserver.unobserve(refCurrent as Element);
     };
-  }, [data, smaConfigs]);
+  }, [data, smaConfigs, colorStyle]);
 
   return (
     <Box w={w} h={h} ref={d3ContainerRef}>
@@ -98,8 +108,8 @@ export const CandleChart: React.FC<Props> = (props) => {
         <g id="back-indicator" />
         <g id="candles" />
         <g id="front-indicator" />
-        <g id='axis_bottom'  />
+        <g id="axis_bottom" />
       </svg>
     </Box>
   );
-}
+};
