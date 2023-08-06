@@ -20,7 +20,7 @@ type Action =
       payload: {
         errorCode: number;
         errorMessage?: string;
-      }
+      };
     }
   | {
       type: 'CLOSE_ERROR_MESSAGE';
@@ -44,9 +44,14 @@ export const UploadPageReducer = (state: State, action: Action) => {
     case 'FILE_OPENED':
       return { ...state, isFileOpened: true, ...action.payload };
     case 'UPLOADING':
-      return { ...state, isUploading: true};
+      return { ...state, isUploading: true };
     case 'DONE_UPLOAD':
-      return { ...state, isUploading: false, ...action.payload, isShownErrorMessage: action.payload.errorCode !== 0};
+      return {
+        ...state,
+        isUploading: false,
+        ...action.payload,
+        isShownErrorMessage: action.payload.errorCode !== 0
+      };
     case 'CLOSE_ERROR_MESSAGE':
       return { ...state, isShownErrorMessage: false };
     default:

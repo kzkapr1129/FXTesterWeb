@@ -1,5 +1,12 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Card,
   CardBody,
   CardFooter,
@@ -24,6 +31,8 @@ import { UploadPageReducer } from '../../reducer/UploadPageReducer';
 
 import * as Api from '../../api/api';
 import axios, { AxiosError } from 'axios';
+import { ApiResult } from '../../types/ApiResult';
+import { useToast } from '../../hooks/useToast';
 
 const initialState = {
   filename: '',
@@ -39,6 +48,8 @@ const initialState = {
 };
 
 export const UploadPage: React.FC = () => {
+  const cancelRef = React.useRef();
+  const { success, error } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const onClickButton = () => {
     inputRef.current?.click();
@@ -47,23 +58,46 @@ export const UploadPage: React.FC = () => {
   const [state, dispatch] = useReducer(UploadPageReducer, initialState);
 
   const onClickUpload = useCallback(() => {
-    dispatch({type: 'UPLOADING'});
+    dispatch({ type: 'UPLOADING' });
     Api.upload(state)
       .then((res) => {
-        console.log("status code: ", res.status);
-        dispatch({type: 'DONE_UPLOAD', payload : {errorCode: 0}});
-      })
-      .catch((res: Error | AxiosError) => {
-        if (axios.isAxiosError(res))  {
-          const status = (res as AxiosError).response?.status ?? -1;
-          const errorMessage = `サーバーリクエスト中にエラーが発生しました: ${status}`;
-          dispatch({type: 'DONE_UPLOAD', payload : {errorCode: -1, errorMessage}});
-        } else {
-          const errorMessage = (res as Error).message;
-          dispatch({type: 'DONE_UPLOAD', payload : {errorCode: -1, errorMessage}});
+        const { code = -1, message = '不明なエラーです' } =
+          res?.data?.status ?? {};
+        dispatch({
+          type: 'DONE_UPLOAD',
+          payload: { errorCode: code, errorMessage: message }
+        });
+
+        if (code === 0) {
+          success({
+            title: 'アップロード完了',
+            description: 'データのアップロードに成功しました'
+          });
         }
+      })
+      .catch((res: Error | AxiosError<ApiResult>) => {
+        if (axios.isAxiosError(res)) {
+          const {
+            status: { code = -1, message = res.message }
+          } = (res as AxiosError<ApiResult>).response?.data ?? { status: {} };
+          dispatch({
+            type: 'DONE_UPLOAD',
+            payload: { errorCode: code, errorMessage: message }
+          });
+        } else {
+          const errorMessage = res.message;
+          dispatch({
+            type: 'DONE_UPLOAD',
+            payload: { errorCode: -1, errorMessage }
+          });
+        }
+
+        error({
+          title: 'アップロード失敗',
+          description: 'データのアップロードに失敗しました'
+        });
       });
-  }, [state.data, state.pairName, state.timeType]);
+  }, [state, success, error]);
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -202,10 +236,7 @@ export const UploadPage: React.FC = () => {
           <Flex w="100%" flexDirection={'row'} justifyContent={'end'}>
             <PrimaryButton
               onClick={onClickUpload}
-              isDisabled={
-                !state.isFileOpened ||
-                state.data.length <= 0
-              }
+              isDisabled={!state.isFileOpened || state.data.length <= 0}
             >
               アップロード
             </PrimaryButton>
@@ -219,20 +250,39 @@ export const UploadPage: React.FC = () => {
         onChange={onChangeFile}
         accept=".csv"
       />
-      { state.isUploading &&
-        <Modal isOpen={true} onClose={null}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>アップロード中</ModalHeader>
-            <ModalBody>
-              <Text>しばらくお待ちください。</Text>
-            </ModalBody>
-            <ModalFooter>
 
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      }
+      <Modal isOpen={state.isUploading} onClose={null}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>アップロード中</ModalHeader>
+          <ModalBody>
+            <Text>しばらくお待ちください。</Text>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <AlertDialog
+        isOpen={state.isShownErrorMessage}
+        leastDestructiveRef={cancelRef}
+        onClose={() => dispatch({ type: 'CLOSE_ERROR_MESSAGE' })}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader>エラー</AlertDialogHeader>
+          <AlertDialogBody>
+            <Text>{state.errorMessage}</Text>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              ref={cancelRef}
+              onClick={() => dispatch({ type: 'CLOSE_ERROR_MESSAGE' })}
+            >
+              OK
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
