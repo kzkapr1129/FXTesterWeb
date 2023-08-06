@@ -6,6 +6,12 @@ import {
   CardHeader,
   Flex,
   Heading,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   StackDivider,
   Text
@@ -18,7 +24,6 @@ import { UploadPageReducer } from '../../reducer/UploadPageReducer';
 
 import * as Api from '../../api/api';
 import axios, { AxiosError } from 'axios';
-import { AccentColor } from '../../theme/color';
 
 const initialState = {
   filename: '',
@@ -214,6 +219,20 @@ export const UploadPage: React.FC = () => {
         onChange={onChangeFile}
         accept=".csv"
       />
+      { state.isUploading &&
+        <Modal isOpen={true} onClose={null}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>アップロード中</ModalHeader>
+            <ModalBody>
+              <Text>しばらくお待ちください。</Text>
+            </ModalBody>
+            <ModalFooter>
+
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      }
     </>
   );
 };

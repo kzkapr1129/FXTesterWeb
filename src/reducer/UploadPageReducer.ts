@@ -46,7 +46,7 @@ export const UploadPageReducer = (state: State, action: Action) => {
     case 'UPLOADING':
       return { ...state, isUploading: true};
     case 'DONE_UPLOAD':
-      return { ...state, isUploading: true, ...action.payload, isShownErrorMessage: action.payload.errorCode !== 0};
+      return { ...state, isUploading: false, ...action.payload, isShownErrorMessage: action.payload.errorCode !== 0};
     case 'CLOSE_ERROR_MESSAGE':
       return { ...state, isShownErrorMessage: false };
     default:
