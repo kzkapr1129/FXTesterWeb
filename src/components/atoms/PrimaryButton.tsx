@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+import { MainColor } from '../../theme/color';
 
 type Props = {
   onClick: () => void;
@@ -10,7 +11,7 @@ type Props = {
 export const PrimaryButton: React.FC<Props> = (props) => {
   const { onClick, isDisabled = false, children } = props;
   return (
-    <Button colorScheme="teal" onClick={onClick} isDisabled={isDisabled}>
+    <Button colorScheme={MainColor} onClick={onClick} isDisabled={isDisabled}>
       {children}
     </Button>
   );

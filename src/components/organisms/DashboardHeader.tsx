@@ -3,6 +3,7 @@ import { Box, Flex, Heading, Link } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { MenuIconButton } from '../atoms/MenuIconButton';
 import { Path } from '../../common/defines';
+import { MainColor500 } from '../../theme/color';
 
 type Props = {
   onOpen: () => void;
@@ -21,7 +22,7 @@ export const DashboardHeader: React.FC<Props> = (props) => {
   return (
     <Flex
       as="nav"
-      bg="teal.500"
+      bg={MainColor500}
       color="gray.50"
       align="center"
       justifyContent="space-between"
