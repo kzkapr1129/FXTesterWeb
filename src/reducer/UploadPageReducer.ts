@@ -16,13 +16,14 @@ type Action =
       type: 'UPLOADING';
     }
   | {
-      type: 'ERROR';
+      type: 'DONE_UPLOAD';
       payload: {
-        message: string;
-      };
+        errorCode: number;
+        errorMessage?: string;
+      }
     }
   | {
-      type: 'DISMISS_ERROR_MESSAGE';
+      type: 'CLOSE_ERROR_MESSAGE';
     };
 
 type State = {
@@ -42,6 +43,12 @@ export const UploadPageReducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'FILE_OPENED':
       return { ...state, isFileOpened: true, ...action.payload };
+    case 'UPLOADING':
+      return { ...state, isUploading: true};
+    case 'DONE_UPLOAD':
+      return { ...state, isUploading: true, ...action.payload, isShownErrorMessage: action.payload.errorCode !== 0};
+    case 'CLOSE_ERROR_MESSAGE':
+      return { ...state, isShownErrorMessage: false };
     default:
       return { ...state };
   }

@@ -10,11 +10,15 @@ import {
   StackDivider,
   Text
 } from '@chakra-ui/react';
-import React, { useReducer, useRef } from 'react';
+import React, { useCallback, useReducer, useRef } from 'react';
 import { PrimaryButton } from '../atoms/PrimaryButton';
 import { SecondaryButton } from '../atoms/SecondaryButton';
 import { loadCsv } from '../../common/parser/loader';
 import { UploadPageReducer } from '../../reducer/UploadPageReducer';
+
+import * as Api from '../../api/api';
+import axios, { AxiosError } from 'axios';
+import { AccentColor } from '../../theme/color';
 
 const initialState = {
   filename: '',
@@ -36,6 +40,25 @@ export const UploadPage: React.FC = () => {
   };
 
   const [state, dispatch] = useReducer(UploadPageReducer, initialState);
+
+  const onClickUpload = useCallback(() => {
+    dispatch({type: 'UPLOADING'});
+    Api.upload(state)
+      .then((res) => {
+        console.log("status code: ", res.status);
+        dispatch({type: 'DONE_UPLOAD', payload : {errorCode: 0}});
+      })
+      .catch((res: Error | AxiosError) => {
+        if (axios.isAxiosError(res))  {
+          const status = (res as AxiosError).response?.status ?? -1;
+          const errorMessage = `サーバーリクエスト中にエラーが発生しました: ${status}`;
+          dispatch({type: 'DONE_UPLOAD', payload : {errorCode: -1, errorMessage}});
+        } else {
+          const errorMessage = (res as Error).message;
+          dispatch({type: 'DONE_UPLOAD', payload : {errorCode: -1, errorMessage}});
+        }
+      });
+  }, [state.data, state.pairName, state.timeType]);
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -67,7 +90,10 @@ export const UploadPage: React.FC = () => {
         dispatch({ type: 'FILE_OPENED', payload });
       }
     });
-    reader.readAsText(e.target.files[0], 'UTF-8');
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      reader.readAsText(selectedFile, 'UTF-8');
+    }
   };
 
   return (
@@ -170,10 +196,9 @@ export const UploadPage: React.FC = () => {
         <CardFooter>
           <Flex w="100%" flexDirection={'row'} justifyContent={'end'}>
             <PrimaryButton
-              onClick={() => console.error('未実装')}
+              onClick={onClickUpload}
               isDisabled={
                 !state.isFileOpened ||
-                state.errorMessage.length !== 0 ||
                 state.data.length <= 0
               }
             >
