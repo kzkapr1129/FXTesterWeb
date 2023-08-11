@@ -10,18 +10,18 @@ import {
   StackDivider,
   Text
 } from '@chakra-ui/react';
+import axios, { AxiosError } from 'axios';
 import React, { useCallback, useReducer, useRef } from 'react';
-import { PrimaryButton } from '../atoms/PrimaryButton';
-import { SecondaryButton } from '../atoms/SecondaryButton';
-import { loadCsv } from '../../common/parser/loader';
-import { UploadPageReducer } from '../../reducer/UploadPageReducer';
 
 import * as Api from '../../api/api';
-import axios, { AxiosError } from 'axios';
-import { ApiResult } from '../../types/ApiResult';
+import { loadCsv } from '../../common/parser/loader';
 import { useToast } from '../../hooks/useToast';
+import { UploadPageReducer } from '../../reducer/UploadPageReducer';
+import { ApiResult } from '../../types/ApiResult';
+import { PrimaryButton } from '../atoms/PrimaryButton';
+import { SecondaryButton } from '../atoms/SecondaryButton';
 import { WaitDialog } from '../organisms/WaitDialog';
-import { OkDialog } from '../organisms/OKDialog';
+import { OKDialog } from '../organisms/OKDialog';
 
 const initialState = {
   filename: '',
@@ -36,11 +36,58 @@ const initialState = {
   data: []
 };
 
+type ReadableRowProps = {
+  title: string;
+  text: string;
+};
+
+const ReadableRow: React.FC<ReadableRowProps> = ({ title, text }) => {
+  return (
+    <Box>
+      <Heading size="xs">{title}</Heading>
+      <Text pt={2} fontSize="sm">
+        {text}
+      </Text>
+    </Box>
+  );
+};
+
+type WritableRowProps = {
+  title: string;
+  text: string;
+  onClick: () => void;
+  disabled: boolean;
+};
+
+const WritableRow: React.FC<WritableRowProps> = (props) => {
+  const { title, text, onClick, disabled } = props;
+  return (
+    <Box>
+      <Flex
+        w="100%"
+        flexDirection={'row'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+      >
+        <Box>
+          <Heading size="xs">{title}</Heading>
+          <Text pt={2} fontSize="sm">
+            {text}
+          </Text>
+        </Box>
+        <SecondaryButton onClick={onClick} isDisabled={disabled}>
+          変更
+        </SecondaryButton>
+      </Flex>
+    </Box>
+  );
+};
+
 export const UploadPage: React.FC = () => {
   const cancelRef = React.useRef();
   const { success, error } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
-  const onClickButton = () => {
+  const onClickOpenFile = () => {
     inputRef.current?.click();
   };
 
@@ -132,93 +179,38 @@ export const UploadPage: React.FC = () => {
         </CardHeader>
         <CardBody>
           <Stack divider={<StackDivider />} spacing={4}>
-            <Box>
-              <Flex
-                w="100%"
-                flexDirection={'row'}
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <Box>
-                  <Heading size="xs">ファイル名</Heading>
-                  <Text pt={2} fontSize="sm">
-                    {state.filename}
-                  </Text>
-                </Box>
-                <SecondaryButton onClick={onClickButton}>変更</SecondaryButton>
-              </Flex>
-            </Box>
-            <Box>
-              <Flex
-                w="100%"
-                flexDirection={'row'}
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <Box>
-                  <Heading size="xs">通貨ペア</Heading>
-                  <Text pt={2} fontSize="sm">
-                    {state.pairName}
-                  </Text>
-                </Box>
-                <SecondaryButton
-                  onClick={() => console.error('未実装')}
-                  isDisabled={!state.isFileOpened}
-                >
-                  変更
-                </SecondaryButton>
-              </Flex>
-            </Box>
-            <Box>
-              <Flex
-                w="100%"
-                flexDirection={'row'}
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <Box>
-                  <Heading size="xs">期間</Heading>
-                  <Text pt={2} fontSize="sm">
-                    {state.startTime != '' && state.endTime != ''
-                      ? `${state.startTime}~${state.endTime}`
-                      : null}
-                  </Text>
-                </Box>
-                <SecondaryButton
-                  onClick={() => console.error('未実装')}
-                  isDisabled={!state.isFileOpened}
-                >
-                  変更
-                </SecondaryButton>
-              </Flex>
-            </Box>
-            <Box>
-              <Flex
-                w="100%"
-                flexDirection={'row'}
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <Box>
-                  <Heading size="xs">時間足</Heading>
-                  <Text pt={2} fontSize="sm">
-                    {state.timeType}
-                  </Text>
-                </Box>
-                <SecondaryButton
-                  onClick={() => console.error('未実装')}
-                  isDisabled={!state.isFileOpened}
-                >
-                  変更
-                </SecondaryButton>
-              </Flex>
-            </Box>
-            <Box>
-              <Heading size="xs">データ件数</Heading>
-              <Text pt={2} fontSize="sm">
-                {state.data.length}
-              </Text>
-            </Box>
+            <WritableRow
+              title="ファイル名"
+              text={state.filename}
+              onClick={onClickOpenFile}
+              disabled={false}
+            />
+            <WritableRow
+              title="通貨ペア"
+              text={state.pairName}
+              onClick={() => console.error('未実装')}
+              disabled={!state.isFileOpened}
+            />
+            <WritableRow
+              title="期間"
+              text={
+                state.startTime != '' && state.endTime != ''
+                  ? `${state.startTime}~${state.endTime}`
+                  : null
+              }
+              onClick={() => console.error('未実装')}
+              disabled={!state.isFileOpened}
+            />
+            <WritableRow
+              title="時間足"
+              text={state.timeType}
+              onClick={() => console.error('未実装')}
+              disabled={!state.isFileOpened}
+            />
+            <ReadableRow
+              title="データ件数"
+              text={state.data.length.toString()}
+            />
           </Stack>
         </CardBody>
         <CardFooter>
@@ -247,7 +239,7 @@ export const UploadPage: React.FC = () => {
         message="しばらくお待ちください。"
       />
 
-      <OkDialog
+      <OKDialog
         isOpen={state.isShownErrorMessage}
         leastDestructiveRef={cancelRef}
         onClose={() => dispatch({ type: 'CLOSE_ERROR_MESSAGE' })}
