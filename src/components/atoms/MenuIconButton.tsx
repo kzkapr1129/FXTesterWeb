@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
+import React, { memo } from 'react';
 
 type Props = {
   onOpen: () => void;

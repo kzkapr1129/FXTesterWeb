@@ -1,14 +1,15 @@
 import { Box } from '@chakra-ui/react';
-import React, { useLayoutEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { Candle } from '../../types/Candle';
+import React, { useLayoutEffect, useRef } from 'react';
+
 import {
   CandleColorStyle,
-  SMAConfig,
   makeScales,
   renderCandles,
-  renderSMAs
+  renderSMAs,
+  SMAConfig
 } from '../../common/d3utils';
+import { Candle } from '../../types/Candle';
 
 /**
  * Description placeholder

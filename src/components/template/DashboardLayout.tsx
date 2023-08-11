@@ -1,8 +1,9 @@
-import React from 'react';
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { DashboardHeader } from '../organisms/DashboardHeader';
+
 import { DashboardDrawer } from '../organisms/DashboardDrawer';
+import { DashboardHeader } from '../organisms/DashboardHeader';
 
 export const DashboardLayout: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

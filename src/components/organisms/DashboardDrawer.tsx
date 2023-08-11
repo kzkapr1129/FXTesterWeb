@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Button,
   Drawer,
@@ -6,7 +5,9 @@ import {
   DrawerContent,
   DrawerOverlay
 } from '@chakra-ui/react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Path } from '../../common/defines';
 
 type Props = {

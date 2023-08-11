@@ -1,13 +1,14 @@
 import React from 'react';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import { HomePage } from '../components/page/HomePage';
-import { LoginPage } from '../components/page/LoginPage';
-import { UploadPage } from '../components/page/UploadPage';
-import { VerificationPage } from '../components/page/VerificationPage';
-import { NotFoundPage } from '../components/page/NotFoundPage';
-import { DashboardLayout } from '../components/template/DashboardLayout';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 import { RouteAuthGuard } from './RouteAuthGuard';
 import { Path } from '../common/defines';
+import { HomePage } from '../components/page/HomePage';
+import { LoginPage } from '../components/page/LoginPage';
+import { NotFoundPage } from '../components/page/NotFoundPage';
+import { UploadPage } from '../components/page/UploadPage';
+import { VerificationPage } from '../components/page/VerificationPage';
+import { DashboardLayout } from '../components/template/DashboardLayout';
 
 export const Routers: React.FC = () => {
   return (

@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+
 import { MainColor } from '../../theme/color';
 
 type Props = {
