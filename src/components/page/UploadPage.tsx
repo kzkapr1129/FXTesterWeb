@@ -1,24 +1,11 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
-  Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Flex,
   Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Stack,
   StackDivider,
   Text
@@ -33,6 +20,8 @@ import * as Api from '../../api/api';
 import axios, { AxiosError } from 'axios';
 import { ApiResult } from '../../types/ApiResult';
 import { useToast } from '../../hooks/useToast';
+import { WaitDialog } from '../organisms/WaitDialog';
+import { OkDialog } from '../organisms/OKDialog';
 
 const initialState = {
   filename: '',
@@ -251,38 +240,20 @@ export const UploadPage: React.FC = () => {
         accept=".csv"
       />
 
-      <Modal isOpen={state.isUploading} onClose={null}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>アップロード中</ModalHeader>
-          <ModalBody>
-            <Text>しばらくお待ちください。</Text>
-          </ModalBody>
-          <ModalFooter></ModalFooter>
-        </ModalContent>
-      </Modal>
+      <WaitDialog
+        isOpen={state.isUploading}
+        onClose={null}
+        title="アップロード中"
+        message="しばらくお待ちください。"
+      />
 
-      <AlertDialog
+      <OkDialog
         isOpen={state.isShownErrorMessage}
         leastDestructiveRef={cancelRef}
         onClose={() => dispatch({ type: 'CLOSE_ERROR_MESSAGE' })}
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>エラー</AlertDialogHeader>
-          <AlertDialogBody>
-            <Text>{state.errorMessage}</Text>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              ref={cancelRef}
-              onClick={() => dispatch({ type: 'CLOSE_ERROR_MESSAGE' })}
-            >
-              OK
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="エラー"
+        message={state.errorMessage}
+      />
     </>
   );
 };
