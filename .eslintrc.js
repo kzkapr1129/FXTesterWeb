@@ -1,6 +1,6 @@
 module.exports = {
   extends: ["eslint:recommended", "plugin:prettier/recommended", 'plugin:react/recommended', "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended"],
-  plugins: ["@typescript-eslint", 'prettier'],
+  plugins: ["@typescript-eslint", 'prettier', 'import'],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     sourceType: "module",
@@ -25,6 +25,44 @@ module.exports = {
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "react/display-name": "off",
     "react/prop-types": "off",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "sort-imports": [
+			"error",
+			{ "ignoreCase": true, "ignoreDeclarationSort": true }
+		],
+		"import/order": [
+			"error",
+			{
+				"groups": [
+					 "builtin",
+					"external",
+					"internal",
+					["sibling", "parent"],
+					"object"
+				],
+				"pathGroups": [
+					{
+						"pattern": "react",
+						"group": "builtin",
+						"position": "before"
+					},
+					{
+						"pattern": ".*/UI/**",
+						"group": "internal",
+						"position": "before"
+					},
+					{
+						"pattern": "./*.module.css",
+						"group": "index",
+						"position": "after"
+					}
+				],
+				"newlines-between": "always",
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				}
+			}
+		]
   }
 }
