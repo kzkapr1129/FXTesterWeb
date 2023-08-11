@@ -20,8 +20,8 @@ import { UploadPageReducer } from '../../reducer/UploadPageReducer';
 import { ApiResult } from '../../types/ApiResult';
 import { PrimaryButton } from '../atoms/PrimaryButton';
 import { SecondaryButton } from '../atoms/SecondaryButton';
-import { WaitDialog } from '../organisms/WaitDialog';
 import { OKDialog } from '../organisms/OKDialog';
+import { WaitDialog } from '../organisms/WaitDialog';
 
 const initialState = {
   filename: '',
