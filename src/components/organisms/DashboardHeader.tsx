@@ -48,6 +48,9 @@ export const DashboardHeader: React.FC<Props> = (props) => {
           <Link onClick={() => navigateTo(Path.UPLOAD)}>CSVアップロード</Link>
         </Box>
         <Box pr="4">
+          <Link onClick={() => navigateTo(Path.DATA)}>データ件数</Link>
+        </Box>
+        <Box pr="4">
           <Link onClick={() => navigateTo(Path.VERIFICATION)}>検証</Link>
         </Box>
         <Link onClick={() => navigateTo(Path.SETTINGS)}>設定</Link>

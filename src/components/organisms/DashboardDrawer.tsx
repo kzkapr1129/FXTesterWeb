@@ -35,6 +35,9 @@ export const DashboardDrawer: React.FC<Props> = (props) => {
             <Button w="100%" onClick={() => navigateTo(Path.UPLOAD)}>
               CSVアップロード
             </Button>
+            <Button w="100%" onClick={() => navigateTo(Path.DATA)}>
+              データ件数
+            </Button>
             <Button w="100%" onClick={() => navigateTo(Path.VERIFICATION)}>
               検証
             </Button>

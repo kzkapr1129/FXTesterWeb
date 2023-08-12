@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { RouteAuthGuard } from './RouteAuthGuard';
 import { Path } from '../common/defines';
+import { DataPage } from '../components/page/DataPage';
 import { HomePage } from '../components/page/HomePage';
 import { LoginPage } from '../components/page/LoginPage';
 import { NotFoundPage } from '../components/page/NotFoundPage';
@@ -24,6 +25,10 @@ export const Routers: React.FC = () => {
           <Route
             path={Path.VERIFICATION}
             element={<RouteAuthGuard element={<VerificationPage />} />}
+          />
+          <Route
+            path={Path.DATA}
+            element={<RouteAuthGuard element={<DataPage />} />}
           />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
