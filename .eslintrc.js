@@ -20,7 +20,7 @@ module.exports = {
     },
   },
   rules: {
-    "no-console": "warn",
+    "no-console": "off",
     "@typescript-eslint/adjacent-overload-signatures": "warn",
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "react/display-name": "off",
