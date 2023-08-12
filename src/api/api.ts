@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { Candle } from '../types/Candle';
+import { TimeType } from '../types/TimeType';
 
 const REQUEST_INTERVAL = 50; // 単位ms
 
@@ -9,6 +10,11 @@ type UploadParam = {
   pairName: string;
   timeType: string;
 };
+
+type DeleteParam = {
+  pairName: string;
+  timeTypes: Array<TimeType>;
+}
 
 type Pairs = {
   pairs: Array<string>;
@@ -32,6 +38,17 @@ export const upload = (param: UploadParam) => {
   };
   return axios.post('http://localhost:8080/api/upload', { data }, config);
 };
+
+export const deleteData = (param: DeleteParam) => {
+  const { pairName, timeTypes } = param;
+  const config = {
+    headers: {
+      'x-pair-name': pairName,
+      ...timeTypes.reduce((sum, v, i) => ({...sum, [`x-time-type-${i}`]: v}), {})
+    }
+  };
+  return axios.delete('http://localhost:8080/api/delete_data', config);
+}
 
 export const getAllPairDetails = () => {
   return axios

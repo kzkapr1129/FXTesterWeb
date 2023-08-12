@@ -17,13 +17,18 @@ import React, { useCallback, useEffect, useReducer } from 'react';
 import * as Api from '../../api/api';
 import { TimeTypeTable } from '../../common/defines';
 import { DataPageReducer } from '../../reducer/DataPageReducer';
+import { TimeType } from '../../types/TimeType';
 import { SecondaryButton } from '../atoms/SecondaryButton';
+import { TimeTypeMultiSelection } from '../organisms/TimeTypeMultiSelection';
 import { WaitDialog } from '../organisms/WaitDialog';
 
 const initState = {
   isDownloading: false,
   isShownErrorMessage: false,
-  data: []
+  data: [],
+  isShownDeleteDialog: false,
+  selectedPairName: null,
+  isDeleting: false
 };
 
 export const DataPage: React.FC = () => {
@@ -31,14 +36,32 @@ export const DataPage: React.FC = () => {
 
   const getNewData = useCallback(() => {
     dispatch({ type: 'DOWNLOADING' });
-    Api.getAllPairDetails().then((res) => {
+    try {
+      Api.getAllPairDetails().then((res) => {
+        const payload = {
+          data: res.map((r) => r.data),
+          errorCode: 0
+        };
+        dispatch({ type: 'DONE_DOWNLOAD', payload });
+      });
+    } catch (e) {
       const payload = {
-        data: res.map((r) => r.data),
-        errorCode: 0
+        data: [],
+        errorCode: -1,
+        errorMessage: 'サーバーとの通信に失敗しました'
       };
       dispatch({ type: 'DONE_DOWNLOAD', payload });
-    });
+    }
   }, []);
+
+  const onClickDelete = useCallback((pairName: string, timeTypes: Array<TimeType>) => {
+    dispatch({ type: 'DELETING' });
+
+    Api.deleteData({pairName, timeTypes}).then(() => {
+      dispatch({type: 'DONE_DELETE'});
+      getNewData();
+    })
+  }, [getNewData]);
 
   useEffect(() => {
     getNewData();
@@ -92,7 +115,14 @@ export const DataPage: React.FC = () => {
                       <Td>{vd.countPerTimeType[TimeTypeTable.Daily]}</Td>
                       <Td>{vd.countPerTimeType[TimeTypeTable.Weekly]}</Td>
                       <Td>
-                        <SecondaryButton onClick={() => console.log()}>
+                        <SecondaryButton
+                          onClick={() =>
+                            dispatch({
+                              type: 'SHOW_DELETE_DIALOG',
+                              payload: { selectedPairName: vd.pairName }
+                            })
+                          }
+                        >
                           削除
                         </SecondaryButton>
                       </Td>
@@ -110,6 +140,25 @@ export const DataPage: React.FC = () => {
         onClose={null}
         title="データ取得中"
         message="しばらくお待ちください"
+      />
+
+      <WaitDialog
+          isOpen={state.isDeleting}
+          onClose={null}
+          title="データ削除中"
+          message="しばらくお待ちください"
+        />
+
+      <TimeTypeMultiSelection
+        isOpen={state.isShownDeleteDialog}
+        onClose={() => dispatch({ type: 'CLOSE_DELETE_DIALOG' })}
+        title="削除"
+        positiveButtonText="削除"
+        negativeButtonText="戻る"
+        onPositive={(timeTypes: Array<TimeType>) =>
+          onClickDelete(state.selectedPairName, timeTypes)
+        }
+        onNegative={() => dispatch({ type: 'CLOSE_DELETE_DIALOG' })}
       />
     </>
   );
